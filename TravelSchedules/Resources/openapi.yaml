@@ -498,11 +498,9 @@ components:
                     description: Периодичность рейсов, например, "автобус раз в 10-15 минут".
                   begin_time:
                     type: string
-                    format: date-time
                     description: Время начала движения по нитке.
                   end_time:
                     type: string
-                    format: date-time
                     description: Время окончания движения по нитке.
               duration:
                 type: integer
@@ -639,11 +637,9 @@ components:
           $ref: '#/components/schemas/Station'
         departure:
           type: string
-          format: date-time
           description: Время отправления
         arrival:
           type: string
-          format: date-time
           description: Время прибытия
         thread:
           $ref: '#/components/schemas/Thread'
@@ -743,12 +739,10 @@ components:
           description: Дни, когда рейс не выполняется
         arrival:
           type: string
-          format: date-time
-          description: Время прибытия в формате ISO 8601
+          description: Время прибытия (формат HH:mm:ss)
         departure:
           type: string
-          format: date-time
-          description: Время отправления в формате ISO 8601
+          description: Время отправления (формат HH:mm:ss)
         thread:
           $ref: '#/components/schemas/Thread'
         days:
@@ -890,11 +884,9 @@ components:
               description: Частота рейсов
             begin_time:
               type: string
-              format: date-time
               description: Время начала
             end_time:
               type: string
-              format: date-time
               description: Время окончания
 
     Directions:
@@ -915,11 +907,9 @@ components:
           description: Периодичность рейсов
         begin_time:
           type: string
-          format: date-time
           description: Время начала рейсов
         end_time:
           type: string
-          format: date-time
           description: Время окончания рейсов
 
     Country:
