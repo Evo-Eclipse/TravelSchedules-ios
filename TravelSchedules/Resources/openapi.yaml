@@ -688,24 +688,24 @@ components:
         station_type:
           type: string
           description: Тип станции
-          enum:
-            - station
-            - platform
-            - stop
-            - checkpoint
-            - post
-            - crossing
-            - overtaking_point
-            - train_station
-            - airport
-            - bus_station
-            - bus_stop
-            - unknown
-            - port
-            - port_point
-            - wharf
-            - river_port
-            - marine_station
+          # enum:
+          #   - station
+          #   - platform
+          #   - stop
+          #   - checkpoint
+          #   - post
+          #   - crossing
+          #   - overtaking_point
+          #   - train_station
+          #   - airport
+          #   - bus_station
+          #   - bus_stop
+          #   - unknown
+          #   - port
+          #   - port_point
+          #   - wharf
+          #   - river_port
+          #   - marine_station
         station_type_name:
           type: string
           description: Название типа станции
