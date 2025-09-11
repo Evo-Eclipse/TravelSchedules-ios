@@ -1,0 +1,69 @@
+//
+//  NearestCityService.swift
+//  TravelSchedules
+//
+//  Created by Pavel Komarov on 11.09.2025.
+//
+
+import Foundation
+import OpenAPIRuntime
+import OpenAPIURLSession
+
+typealias NearestCity = Components.Schemas.ResponseNearestCity
+
+protocol NearestCityServiceProtocol {
+    func fetchNearestCity(lat: Double, lng: Double) async throws -> NearestCity
+}
+
+final class NearestCityService: NearestCityServiceProtocol {
+    private let client: Client
+    private let apikey: String
+
+    init(client: Client, apikey: String) {
+        self.client = client
+        self.apikey = apikey
+    }
+
+    func fetchNearestCity(lat: Double, lng: Double) async throws -> NearestCity {
+        let response = try await client.getNearestCity(query: .init(
+            apikey: apikey,
+            lat: lat,
+            lng: lng
+        ))
+
+        return try response.ok.body.json
+    }
+}
+
+// Example usage of the service
+
+func testFetchNearestCity() {
+    Task {
+        do {
+            let apiKey = Constants.apiKey
+
+            let client = try Client(
+                serverURL: Servers.Server1.url(),
+                transport: URLSessionTransport()
+            )
+
+            let service = NearestCityService(
+                client: client,
+                apikey: apiKey
+            )
+
+            print("Fetching nearest city...")
+
+            let nearestCity = try await service.fetchNearestCity(
+                lat: 59.864177,
+                lng: 30.319163
+            )
+
+            print("Successfully fetched nearest city: \(nearestCity)")
+        } catch {
+            print("Failed to fetch nearest city: \(error)")
+        }
+    }
+}
+
+// End of example usage
