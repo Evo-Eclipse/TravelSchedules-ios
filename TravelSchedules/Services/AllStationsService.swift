@@ -40,17 +40,14 @@ final class AllStationsService: AllStationsServiceProtocol {
     }
 }
 
-// Example usage of the service
+// Smoke test: AllStationsService
 
 func testFetchAllStations() {
     Task {
         do {
             let apiKey = Constants.apiKey
 
-            let client = try Client(
-                serverURL: Servers.Server1.url(),
-                transport: URLSessionTransport()
-            )
+            let client = try APIClientProvider.make(apiKey: apiKey)
 
             let service = AllStationsService(
                 client: client,
@@ -74,4 +71,4 @@ func testFetchAllStations() {
     }
 }
 
-// End of example usage
+// End of smoke test

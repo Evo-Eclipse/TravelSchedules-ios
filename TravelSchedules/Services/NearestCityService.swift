@@ -35,17 +35,14 @@ final class NearestCityService: NearestCityServiceProtocol {
     }
 }
 
-// Example usage of the service
+// Smoke test: NearestCityService
 
 func testFetchNearestCity() {
     Task {
         do {
             let apiKey = Constants.apiKey
 
-            let client = try Client(
-                serverURL: Servers.Server1.url(),
-                transport: URLSessionTransport()
-            )
+            let client = try APIClientProvider.make(apiKey: apiKey)
 
             let service = NearestCityService(
                 client: client,
@@ -66,4 +63,4 @@ func testFetchNearestCity() {
     }
 }
 
-// End of example usage
+// End of smoke test

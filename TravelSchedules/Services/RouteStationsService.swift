@@ -34,17 +34,14 @@ final class RouteStationsService: RouteStationsServiceProtocol {
     }
 }
 
-// Example usage of the service
+// Smoke test: RouteStationsService
 
 func testFetchRouteStations() {
     Task {
         do {
             let apiKey = Constants.apiKey
 
-            let client = try Client(
-                serverURL: Servers.Server1.url(),
-                transport: URLSessionTransport()
-            )
+            let client = try APIClientProvider.make(apiKey: apiKey)
 
             let service = RouteStationsService(
                 client: client,
@@ -64,4 +61,4 @@ func testFetchRouteStations() {
     }
 }
 
-// End of example usage
+// End of smoke test

@@ -36,17 +36,14 @@ final class NearestStationsService: NearestStationsServiceProtocol {
     }
 }
 
-// Example usage of the service
+// Smoke test: NearestStationsService
 
 func testFetchNearestStations() {
     Task {
         do {
             let apiKey = Constants.apiKey
 
-            let client = try Client(
-                serverURL: Servers.Server1.url(),
-                transport: URLSessionTransport()
-            )
+            let client = try APIClientProvider.make(apiKey: apiKey)
 
             let service = NearestStationsService(
                 client: client,
@@ -68,4 +65,4 @@ func testFetchNearestStations() {
     }
 }
 
-// End of example usage
+// End of smoke test

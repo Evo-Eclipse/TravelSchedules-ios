@@ -33,17 +33,14 @@ final class CopyrightService: CopyrightServiceProtocol {
     }
 }
 
-// Example usage of the service
+// Smoke test: CopyrightService
 
 func testFetchCopyright() {
     Task {
         do {
             let apiKey = Constants.apiKey
 
-            let client = try Client(
-                serverURL: Servers.Server1.url(),
-                transport: URLSessionTransport()
-            )
+            let client = try APIClientProvider.make(apiKey: apiKey)
 
             let service = CopyrightService(
                 client: client,
@@ -61,4 +58,4 @@ func testFetchCopyright() {
     }
 }
 
-// End of example usage
+// End of smoke test

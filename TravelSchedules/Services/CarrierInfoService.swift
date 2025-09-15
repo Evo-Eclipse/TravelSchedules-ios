@@ -34,17 +34,14 @@ final class CarrierInfoService: CarrierInfoServiceProtocol {
     }
 }
 
-// Example usage of the service
+// Smoke test: CarrierInfoService
 
 func testFetchCarrierInfo() {
     Task {
         do {
             let apiKey = Constants.apiKey
 
-            let client = try Client(
-                serverURL: Servers.Server1.url(),
-                transport: URLSessionTransport()
-            )
+            let client = try APIClientProvider.make(apiKey: apiKey)
 
             let service = CarrierInfoService(
                 client: client,
@@ -64,4 +61,4 @@ func testFetchCarrierInfo() {
     }
 }
 
-// End of example usage
+// End of smoke test

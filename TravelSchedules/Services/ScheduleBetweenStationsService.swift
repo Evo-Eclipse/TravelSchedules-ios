@@ -35,17 +35,14 @@ final class ScheduleBetweenStationsService: ScheduleBetweenStationsServiceProtoc
     }
 }
 
-// Example usage of the service
+// Smoke test: ScheduleBetweenStationsService
 
 func testFetchScheduleBetweenStations() {
     Task {
         do {
             let apiKey = Constants.apiKey
 
-            let client = try Client(
-                serverURL: Servers.Server1.url(),
-                transport: URLSessionTransport()
-            )
+            let client = try APIClientProvider.make(apiKey: apiKey)
 
             let service = ScheduleBetweenStationsService(
                 client: client,
@@ -66,4 +63,4 @@ func testFetchScheduleBetweenStations() {
     }
 }
 
-// End of example usage
+// End of smoke test
