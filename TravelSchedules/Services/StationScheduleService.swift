@@ -17,16 +17,13 @@ protocol StationScheduleServiceProtocol {
 
 final class StationScheduleService: StationScheduleServiceProtocol {
     private let client: Client
-    private let apikey: String
 
-    init(client: Client, apikey: String) {
+    init(client: Client) {
         self.client = client
-        self.apikey = apikey
     }
 
     func fetchStationSchedule(station: String) async throws -> StationSchedule {
         let response = try await client.getStationSchedule(query: .init(
-            apikey: apikey,
             station: station
         ))
 
@@ -43,10 +40,7 @@ func testFetchStationSchedule() {
 
             let client = try APIClientProvider.make(apiKey: apiKey)
 
-            let service = StationScheduleService(
-                client: client,
-                apikey: apiKey
-            )
+            let service = StationScheduleService(client: client)
 
             print("Fetching station schedule...")
 

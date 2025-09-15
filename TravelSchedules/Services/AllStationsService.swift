@@ -17,17 +17,13 @@ protocol AllStationsServiceProtocol {
 
 final class AllStationsService: AllStationsServiceProtocol {
     private let client: Client
-    private let apikey: String
 
-    init(client: Client, apikey: String) {
+    init(client: Client) {
         self.client = client
-        self.apikey = apikey
     }
 
     func fetchAllStations() async throws -> AllStations {
-        let response = try await client.getAllStations(query: .init(
-            apikey: apikey
-        ))
+        let response = try await client.getAllStations(query: .init())
 
         let responseBody = try response.ok.body.html
 
@@ -49,10 +45,7 @@ func testFetchAllStations() {
 
             let client = try APIClientProvider.make(apiKey: apiKey)
 
-            let service = AllStationsService(
-                client: client,
-                apikey: apiKey
-            )
+            let service = AllStationsService(client: client)
 
             print("Fetching all stations...")
 

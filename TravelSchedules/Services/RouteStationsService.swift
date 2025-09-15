@@ -17,16 +17,13 @@ protocol RouteStationsServiceProtocol {
 
 final class RouteStationsService: RouteStationsServiceProtocol {
     private let client: Client
-    private let apikey: String
 
-    init(client: Client, apikey: String) {
+    init(client: Client) {
         self.client = client
-        self.apikey = apikey
     }
 
     func fetchRouteStations(uid: String) async throws -> RouteStations {
         let response = try await client.getRouteStations(query: .init(
-            apikey: apikey,
             uid: uid
         ))
 
@@ -43,10 +40,7 @@ func testFetchRouteStations() {
 
             let client = try APIClientProvider.make(apiKey: apiKey)
 
-            let service = RouteStationsService(
-                client: client,
-                apikey: apiKey
-            )
+            let service = RouteStationsService(client: client)
 
             print("Fetching route stations...")
 
