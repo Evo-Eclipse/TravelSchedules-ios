@@ -32,6 +32,9 @@ extension TripSegment {
             to: toStation,
             departure: departureDate,
             arrival: arrivalDate,
+            departureTime: segment.departure,
+            arrivalTime: segment.arrival,
+            startDate: segment.start_date,
             durationSec: segment.duration,
             thread: threadSummary,
             tickets: ticketsInfo

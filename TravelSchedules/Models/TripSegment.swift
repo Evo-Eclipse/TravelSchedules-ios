@@ -15,6 +15,9 @@ struct TripSegment: Hashable {
     let to: Station // swiftlint:disable:this identifier_name
     let departure: Date?
     let arrival: Date?
+    let departureTime: String?  // Raw time string from API (e.g., "13:30:00")
+    let arrivalTime: String?    // Raw time string from API (e.g., "15:10:00")
+    let startDate: String?      // Raw date string from API (e.g., "2025-10-13")
     let durationSec: Int?
     let thread: ThreadSummary?
     let tickets: TicketsInfo?

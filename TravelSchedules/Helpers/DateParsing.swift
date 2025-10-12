@@ -43,4 +43,13 @@ enum DateParsing {
         formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
         return formatter
     }()
+    
+    // Parse date string like "2025-10-13" to Date for formatting
+    static func parseDateString(_ dateString: String) -> Date? {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeZone = TimeZone(secondsFromGMT: 0)
+        return formatter.date(from: dateString)
+    }
 }
