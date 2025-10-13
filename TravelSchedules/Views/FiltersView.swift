@@ -83,6 +83,7 @@ struct FiltersView: View {
             }
             .navigationTitle("")
             .navigationBarTitleDisplayMode(.inline)
+            .toolbar(.hidden, for: .tabBar)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button {

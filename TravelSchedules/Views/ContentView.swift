@@ -9,10 +9,13 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var selectedTab = 0
+    @State private var tripSelection = TripSelection()
+    @State private var navigator = AppNavigator()
     
     var body: some View {
         TabView(selection: $selectedTab) {
             HomeView()
+                .environment(tripSelection)
                 .tabItem {
                     Image(.iconSchedule)
                 }
@@ -24,6 +27,7 @@ struct ContentView: View {
                 .tag(1)
         }
         .tint(Color(.yBlack))
+        .environment(navigator)
     }
 }
 

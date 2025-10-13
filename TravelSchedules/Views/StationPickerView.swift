@@ -9,81 +9,83 @@ import SwiftUI
 
 struct StationPickerView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(TripSelection.self) private var tripSelection
+    @Environment(AppNavigator.self) private var navigator
     @State var viewModel: StationPickerViewModel
-    let cityCode: String
-    var onStationSelected: (Station) -> Void
+    let city: City
+    let direction: Direction
     
     var body: some View {
-        NavigationStack {
-            ZStack {
-                Color.yWhite
-                    .ignoresSafeArea()
+        ZStack {
+            Color.yWhite
+                .ignoresSafeArea()
+            
+            VStack {
+                SearchBarView(searchText: $viewModel.searchQuery)
                 
-                VStack {
-                    SearchBarView(searchText: $viewModel.searchQuery)
-                    
-                    if viewModel.isLoading {
-                        Spacer()
-                        ProgressView()
-                        Spacer()
-                    } else {
-                        ScrollView {
-                            LazyVStack {
-                                ForEach(viewModel.filteredStations, id: \.code) { station in
-                                    Button {
-                                        onStationSelected(station)
-                                    } label: {
-                                        ListCellView(title: station.title)
-                                    }
+                if viewModel.isLoading {
+                    Spacer()
+                    ProgressView()
+                    Spacer()
+                } else {
+                    ScrollView {
+                        LazyVStack {
+                            ForEach(viewModel.filteredStations, id: \.code) { station in
+                                Button {
+                                    selectStation(station)
+                                } label: {
+                                    ListCellView(title: station.title)
                                 }
                             }
                         }
-                        .overlay {
-                            if viewModel.filteredStations.isEmpty && !viewModel.searchQuery.isEmpty {
-                                Text("Станция не найдена")
-                                    .font(.title)
-                                    .foregroundColor(.yBlack)
+                    }
+                    .overlay {
+                        if viewModel.filteredStations.isEmpty && !viewModel.searchQuery.isEmpty {
+                            Text("Станция не найдена")
+                                .font(.title)
+                                .foregroundColor(.yBlack)
 
-                                // Would be better to use
-                                // ContentUnavailableView(
-                                //     "Станция не найдена",
-                                //     systemImage: "magnifyingglass",
-                                //     description: Text("Попробуйте изменить запрос")
-                                // )
-                            }
+                            // Would be better to use
+                            // ContentUnavailableView(
+                            //     "Станция не найдена",
+                            //     systemImage: "magnifyingglass",
+                            //     description: Text("Попробуйте изменить запрос")
+                            // )
                         }
                     }
                 }
             }
-            .navigationTitle("Выбор станции")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button {
-                        dismiss()
-                    } label: {
-                        Image(systemName: "chevron.left")
-                            .foregroundColor(.yBlack)
-                    }
-                }
-            }
         }
+        .navigationTitle("Выбор станции")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar(.hidden, for: .tabBar)
+        .customBackButton(dismiss: dismiss)
         .task {
-            await viewModel.loadStations(cityCode: cityCode)
+            await viewModel.loadStations(cityCode: city.code)
         }
         .onChange(of: viewModel.searchQuery) {
             Task {
-                await viewModel.searchStations(cityCode: cityCode)
+                await viewModel.searchStations(cityCode: city.code)
             }
         }
+    }
+
+    private func selectStation(_ station: Station) {
+        switch direction {
+        case .from:
+            tripSelection.fromStation = station
+        case .to:
+            tripSelection.toStation = station
+        }
+        // Pop station and city pickers
+        navigator.pop(2)
     }
 }
 
 #Preview {
     StationPickerView(
         viewModel: DIContainer.shared.makeStationPickerViewModel(),
-        cityCode: "c213"
-    ) { station in
-        print("Selected station: \(station.title)")
-    }
+        city: City(code: "c213", title: "Москва", lat: nil, lng: nil, distanceKm: nil, kind: .settlement),
+        direction: .from
+    )
 }

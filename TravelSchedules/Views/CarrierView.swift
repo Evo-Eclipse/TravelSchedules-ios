@@ -20,17 +20,8 @@ struct CarrierView: View {
                 .font(.title)
                 .padding()
         }
-        .navigationBarBackButtonHidden(true)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button {
-                    dismiss()
-                } label: {
-                    Image(systemName: "chevron.left")
-                        .foregroundColor(.yBlack)
-                }
-            }
-        }
+        .customBackButton(dismiss: dismiss)
+        .toolbar(.hidden, for: .tabBar)
     }
 }
 

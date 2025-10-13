@@ -10,6 +10,7 @@ import Foundation
 @Observable final class SchedulesViewModel {
     private let scheduleRepository: ScheduleRepository
     private let carrierRepository: CarrierRepository
+    let filtersViewModel = FiltersViewModel()
     
     var segments: [TripSegment] = []
     var filteredSegments: [TripSegment] = []

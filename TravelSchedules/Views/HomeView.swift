@@ -8,26 +8,18 @@
 import SwiftUI
 
 struct HomeView: View {
-    @State private var fromCity: City?
-    @State private var fromStation: Station?
-    @State private var toCity: City?
-    @State private var toStation: Station?
-    
-    @State private var showFromCityPicker = false
-    @State private var showToCityPicker = false
-    @State private var showFromStationPicker = false
-    @State private var showToStationPicker = false
-
-    @State private var navigateToSchedules = false
+    @Environment(TripSelection.self) private var tripSelection
+    @Environment(AppNavigator.self) private var appNavigator
     
     private let dependencies = DIContainer.shared
     
     var isFormComplete: Bool {
-        fromCity != nil && fromStation != nil && toCity != nil && toStation != nil
+        tripSelection.isComplete
     }
     
     var body: some View {
-        NavigationStack {
+        @Bindable var navigator = appNavigator
+        NavigationStack(path: $navigator.path) {
             ZStack {
                 Color.yWhite
                     .ignoresSafeArea()
@@ -48,21 +40,21 @@ struct HomeView: View {
                     HStack(spacing: 16) {
                         VStack(alignment: .leading, spacing: 0) {
                             Button {
-                                showFromCityPicker = true
+                                navigator.push(.cityPicker(.from))
                             } label: {
-                                Text(fromStation?.title ?? "Откуда")
+                                Text(tripSelection.fromStation?.title ?? "Откуда")
                                     .lineLimit(1)
-                                    .foregroundColor(fromStation == nil ? .yGrayUniversal : .yBlackUniversal)
+                                    .foregroundColor(tripSelection.fromStation == nil ? .yGrayUniversal : .yBlackUniversal)
                                     .padding()
                                     .frame(maxWidth: .infinity, alignment: .leading)
                             }
                             
                             Button {
-                                showToCityPicker = true
+                                navigator.push(.cityPicker(.to))
                             } label: {
-                                Text(toStation?.title ?? "Куда")
+                                Text(tripSelection.toStation?.title ?? "Куда")
                                     .lineLimit(1)
-                                    .foregroundColor(toStation == nil ? .yGrayUniversal : .yBlackUniversal)
+                                    .foregroundColor(tripSelection.toStation == nil ? .yGrayUniversal : .yBlackUniversal)
                                     .padding()
                                     .frame(maxWidth: .infinity, alignment: .leading)
                             }
@@ -71,8 +63,7 @@ struct HomeView: View {
                         .clipShape(RoundedRectangle(cornerRadius: 20))
                         
                         Button {
-                            swap(&fromCity, &toCity)
-                            swap(&fromStation, &toStation)
+                            tripSelection.swapDirections()
                         } label: {
                             Image(systemName: "arrow.2.squarepath")
                                 .foregroundColor(.yBlue)
@@ -90,7 +81,9 @@ struct HomeView: View {
                     
                     if isFormComplete {
                         Button {
-                            navigateToSchedules = true
+                            if let from = tripSelection.fromStation, let to = tripSelection.toStation {
+                                navigator.push(.schedules(from: from, to: to))
+                            }
                         } label: {
                             Text("Найти")
                                 .bold()
@@ -105,55 +98,26 @@ struct HomeView: View {
                     Spacer()
                 }
             }
-            .navigationBarHidden(true)
-        }
-        .fullScreenCover(isPresented: $showFromCityPicker) {
-            CityPickerView(
-                viewModel: dependencies.makeCityPickerViewModel()
-            ) { city in
-                fromCity = city
-                showFromCityPicker = false
-                showFromStationPicker = true
-            }
-        }
-        .fullScreenCover(isPresented: $showToCityPicker) {
-            CityPickerView(
-                viewModel: dependencies.makeCityPickerViewModel()
-            ) { city in
-                toCity = city
-                showToCityPicker = false
-                showToStationPicker = true
-            }
-        }
-        .fullScreenCover(isPresented: $showFromStationPicker) {
-            if let city = fromCity {
-                StationPickerView(
-                    viewModel: dependencies.makeStationPickerViewModel(),
-                    cityCode: city.code
-                ) { station in
-                    fromStation = station
-                    showFromStationPicker = false
+            .navigationDestination(for: AppRoute.self) { destination in
+                switch destination {
+                case .cityPicker(let direction):
+                    CityPickerView(
+                        viewModel: dependencies.makeCityPickerViewModel(),
+                        direction: direction
+                    )
+                case .stationPicker(let city, let direction):
+                    StationPickerView(
+                        viewModel: dependencies.makeStationPickerViewModel(),
+                        city: city,
+                        direction: direction
+                    )
+                case .schedules(let from, let to):
+                    SchedulesView(
+                        viewModel: dependencies.makeSchedulesViewModel(),
+                        fromStation: from,
+                        toStation: to
+                    )
                 }
-            }
-        }
-        .fullScreenCover(isPresented: $showToStationPicker) {
-            if let city = toCity {
-                StationPickerView(
-                    viewModel: dependencies.makeStationPickerViewModel(),
-                    cityCode: city.code
-                ) { station in
-                    toStation = station
-                    showToStationPicker = false
-                }
-            }
-        }
-        .fullScreenCover(isPresented: $navigateToSchedules) {
-            if let fromStation, let toStation {
-                SchedulesView(
-                    viewModel: dependencies.makeSchedulesViewModel(),
-                    fromStation: fromStation,
-                    toStation: toStation
-                )
             }
         }
     }
