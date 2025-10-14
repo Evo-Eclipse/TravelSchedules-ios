@@ -71,7 +71,7 @@ final class StationRepository {
             return Array(stations.prefix(limit))
         }
 
-        let lower = query.lowercased()
+        let lower = query.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
         return stations
             .filter {
                 $0.title.lowercased().contains(lower) ||

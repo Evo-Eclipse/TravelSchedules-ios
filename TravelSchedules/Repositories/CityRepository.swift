@@ -49,7 +49,7 @@ final class CityRepository {
             return Array(source.prefix(limit))
         }
 
-        let lower = query.lowercased()
+        let lower = query.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
         return source
             .filter {
                 $0.title.lowercased().contains(lower) ||
