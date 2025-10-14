@@ -11,17 +11,19 @@ import Foundation
     private let cityRepository: CityRepository
     
     var searchQuery: String = ""
-    var cities: [City] = []
-    var isLoading: Bool = false
-    var errorMessage: String?
+    var state: ViewState<[City]> = .idle
     
     var filteredCities: [City] {
+        guard let cities = state.data else { return [] }
+        
         if searchQuery.isEmpty {
             return cities
         }
+        
+        let trimmedQuery = searchQuery.trimmingCharacters(in: .whitespaces)
         return cities.filter {
-            $0.title.localizedCaseInsensitiveContains(searchQuery.trimmingCharacters(in: .whitespaces)) ||
-            $0.code.localizedCaseInsensitiveContains(searchQuery.trimmingCharacters(in: .whitespaces))
+            $0.title.localizedCaseInsensitiveContains(trimmedQuery) ||
+            $0.code.localizedCaseInsensitiveContains(trimmedQuery)
         }
     }
     
@@ -30,21 +32,13 @@ import Foundation
     }
     
     func loadCities() async {
-        isLoading = true
-        errorMessage = nil
+        state = .loading
         
         do {
-            cities = try await cityRepository.allCities()
+            let cities = try await cityRepository.allCities()
+            state = .loaded(cities)
         } catch {
-            errorMessage = "Не удалось загрузить список городов"
+            state = .error(.network)
         }
-        
-        isLoading = false
-    }
-    
-    // TODO: INVESTIGATE
-    func searchCities() async {
-        let results = await cityRepository.searchCities(query: searchQuery, limit: 50)
-        cities = results
     }
 }

@@ -11,17 +11,19 @@ import Foundation
     private let stationRepository: StationRepository
     
     var searchQuery: String = ""
-    var stations: [Station] = []
-    var isLoading: Bool = false
-    var errorMessage: String?
+    var state: ViewState<[Station]> = .idle
     
     var filteredStations: [Station] {
+        guard let stations = state.data else { return [] }
+        
         if searchQuery.isEmpty {
             return stations
         }
+        
+        let trimmedQuery = searchQuery.trimmingCharacters(in: .whitespaces)
         return stations.filter {
-            $0.title.localizedCaseInsensitiveContains(searchQuery.trimmingCharacters(in: .whitespaces)) ||
-            $0.code.localizedCaseInsensitiveContains(searchQuery.trimmingCharacters(in: .whitespaces))
+            $0.title.localizedCaseInsensitiveContains(trimmedQuery) ||
+            $0.code.localizedCaseInsensitiveContains(trimmedQuery)
         }
     }
     
@@ -30,24 +32,13 @@ import Foundation
     }
     
     func loadStations(cityCode: String) async {
-        isLoading = true
-        errorMessage = nil
+        state = .loading
         
         do {
-            stations = try await stationRepository.stations(in: cityCode)
+            let stations = try await stationRepository.stations(in: cityCode)
+            state = .loaded(stations)
         } catch {
-            errorMessage = "Не удалось загрузить список станций"
-        }
-        
-        isLoading = false
-    }
-    
-    // TODO: INVESTIGATE
-    func searchStations(cityCode: String) async {
-        do {
-            stations = try await stationRepository.searchStations(cityCode: cityCode, query: searchQuery, limit: 50)
-        } catch {
-            errorMessage = "Ошибка поиска станций"
+            state = .error(.network)
         }
     }
 }

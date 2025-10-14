@@ -23,37 +23,39 @@ struct StationPickerView: View {
             VStack {
                 SearchBarView(searchText: $viewModel.searchQuery)
                 
-                if viewModel.isLoading {
+                switch viewModel.state {
+                case .idle:
+                    EmptyView()
+                    
+                case .loading:
                     Spacer()
                     ProgressView()
                     Spacer()
-                } else {
-                    ScrollView {
-                        LazyVStack {
-                            ForEach(viewModel.filteredStations, id: \.code) { station in
-                                Button {
-                                    selectStation(station)
-                                } label: {
-                                    ListCellView(title: station.title)
+                    
+                case .loaded:
+                    if viewModel.filteredStations.isEmpty && !viewModel.searchQuery.isEmpty {
+                        Spacer()
+                        Text("Станция не найдена")
+                            .font(.title)
+                            .bold()
+                            .foregroundColor(.yBlack)
+                        Spacer()
+                    } else {
+                        ScrollView {
+                            LazyVStack {
+                                ForEach(viewModel.filteredStations, id: \.code) { station in
+                                    Button {
+                                        selectStation(station)
+                                    } label: {
+                                        ListCellView(title: station.title)
+                                    }
                                 }
                             }
                         }
                     }
-                    .overlay {
-                        if viewModel.filteredStations.isEmpty && !viewModel.searchQuery.isEmpty {
-                            Text("Станция не найдена")
-                                .font(.title)
-                                .bold()
-                                .foregroundColor(.yBlack)
-
-                            // Would be better to use
-                            // ContentUnavailableView(
-                            //     "Станция не найдена",
-                            //     systemImage: "magnifyingglass",
-                            //     description: Text("Попробуйте изменить запрос")
-                            // )
-                        }
-                    }
+                    
+                case .error(let errorType):
+                    ErrorView(type: errorType == .network ? .noInternet : .serverError)
                 }
             }
         }
@@ -64,11 +66,6 @@ struct StationPickerView: View {
         .task {
             await viewModel.loadStations(cityCode: city.code)
         }
-        .onChange(of: viewModel.searchQuery) {
-            Task {
-                await viewModel.searchStations(cityCode: city.code)
-            }
-        }
     }
 
     private func selectStation(_ station: Station) {
@@ -78,7 +75,6 @@ struct StationPickerView: View {
         case .to:
             tripSelection.toStation = station
         }
-        // Pop station and city pickers
         navigator.pop(2)
     }
 }

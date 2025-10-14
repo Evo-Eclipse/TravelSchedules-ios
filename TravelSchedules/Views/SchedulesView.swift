@@ -21,47 +21,52 @@ struct SchedulesView: View {
                 .ignoresSafeArea()
             
             VStack(spacing: 0) {
-                if viewModel.isLoading {
+                Text("\(fromStation.title) → \(toStation.title)")
+                    .font(.title)
+                    .bold()
+                    .foregroundColor(.yBlack)
+                    .padding()
+                
+                switch viewModel.state {
+                case .idle:
+                    EmptyView()
+                    
+                case .loading:
                     Spacer()
                     ProgressView()
                     Spacer()
-                } else if viewModel.errorMessage != nil {
-                    Spacer()
-                    ErrorView(type: .serverError)
-                    Spacer()
-                } else if viewModel.filteredSegments.isEmpty {
-                    Text("\(fromStation.title) → \(toStation.title)")
-                        .font(.title)
-                        .bold()
-                        .foregroundColor(.yBlack)
-                        .padding()
-                    Spacer()
-                    Text("Вариантов нет")
-                        .font(.title)
-                        .bold()
-                        .foregroundColor(.yBlack)
-                    Spacer()
-                } else {
-                    ScrollView {
-                        Text("\(fromStation.title) → \(toStation.title)")
+                    
+                case .loaded:
+                    if let segments = viewModel.state.data, segments.isEmpty {
+                        ErrorView(type: .serverError)
+                    } else if viewModel.filteredSegments.isEmpty {
+                        Spacer()
+                        Text("Вариантов нет")
                             .font(.title)
                             .bold()
                             .foregroundColor(.yBlack)
-                            .padding()
-                        
-                        LazyVStack(spacing: 8) {
-                            ForEach(viewModel.filteredSegments, id: \.id) { segment in
-                                NavigationLink {
-                                    CarrierView()
-                                } label: {
-                                    ScheduleCardView(segment: segment)
+                        Spacer()
+                    } else {
+                        ScrollView {
+                            LazyVStack(spacing: 8) {
+                                ForEach(viewModel.filteredSegments, id: \.id) { segment in
+                                    NavigationLink {
+                                        CarrierView()
+                                    } label: {
+                                        ScheduleCardView(segment: segment)
+                                    }
+                                    .buttonStyle(.plain)
                                 }
-                                .buttonStyle(.plain)
                             }
+                            .padding(.horizontal)
+                            .padding(.bottom, 80)
                         }
-                        .padding(.horizontal)
-                        .padding(.bottom, 80)
                     }
+                    
+                case .error(let errorType):
+                    Spacer()
+                    ErrorView(type: errorType == .network ? .noInternet : .serverError)
+                    Spacer()
                 }
             }
         }
@@ -75,7 +80,6 @@ struct SchedulesView: View {
             FiltersView(viewModel: filtersVM) {
                 viewModel.selectedTimeRanges = filtersVM.selectedTimeRanges
                 viewModel.showWithTransfers = filtersVM.showWithTransfers
-                viewModel.applyFilters()
                 showFilters = false
             }
         }
@@ -108,11 +112,10 @@ struct SchedulesView: View {
 
 #Preview {
     let fromStation = Station(
-        code: "s2006004", // Москва (Ленинградский вокзал)
+        code: "s2006004",
         title: "Москва (Ленинградский вокзал)",
-        cityCode: "c213", // Москва
-        lat: nil,
-        lng: nil,
+        cityCode: "c213",
+        lat: nil, lng: nil,
         transportType: .train,
         stationType: .station,
         stationTypeName: nil,
@@ -125,9 +128,8 @@ struct SchedulesView: View {
     let toStation = Station(
         code: "s9602494",
         title: "Санкт-Петербург (Московский вокзал)",
-        cityCode: "c2", // Санкт-Петербург
-        lat: nil,
-        lng: nil,
+        cityCode: "c2",
+        lat: nil, lng: nil,
         transportType: .train,
         stationType: .station,
         stationTypeName: nil,

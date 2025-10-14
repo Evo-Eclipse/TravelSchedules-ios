@@ -1,5 +1,5 @@
 //
-//  ScheduleSegmentCardView.swift
+//  ScheduleCardView.swift
 //  TravelSchedules
 //
 //  Created by Pavel Komarov on 13.10.2025.
@@ -10,24 +10,9 @@ import SwiftUI
 struct ScheduleCardView: View {
     let segment: TripSegment
     
-    private let timeFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "HH:mm"
-        return formatter
-    }()
-    
-    private let dateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "ru_RU")
-        formatter.dateFormat = "d MMMM"
-        return formatter
-    }()
-    
-    // Parse time string like "22:30:00" or "22:30" to "22:30"
     private func formatTime(_ timeString: String?) -> String {
         guard let timeString = timeString else { return "--:--" }
         
-        // Try to extract HH:mm from various formats
         let components = timeString.split(separator: ":")
         if components.count >= 2 {
             return "\(components[0]):\(components[1])"
@@ -35,7 +20,6 @@ struct ScheduleCardView: View {
         
         return timeString
     }
-    
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -78,7 +62,7 @@ struct ScheduleCardView: View {
                 
                 if let startDate = segment.startDate,
                    let date = DateParsing.parseDateString(startDate) {
-                    Text(dateFormatter.string(from: date))
+                    Text(DateParsing.displayDateFormatter.string(from: date))
                         .font(.caption)
                         .foregroundColor(.yBlackUniversal)
                 }
@@ -127,11 +111,10 @@ struct ScheduleCardView: View {
 
 #Preview {
     let fromStation = Station(
-        code: "s2006004", // Москва (Ленинградский вокзал)
+        code: "s2006004",
         title: "Москва (Ленинградский вокзал)",
-        cityCode: "c213", // Москва
-        lat: nil,
-        lng: nil,
+        cityCode: "c213",
+        lat: nil, lng: nil,
         transportType: .train,
         stationType: .station,
         stationTypeName: nil,
@@ -142,11 +125,10 @@ struct ScheduleCardView: View {
     )
     
     let toStation = Station(
-        code: "s9602494", // Санкт-Петербург (Московский вокзал)
+        code: "s9602494",
         title: "Санкт-Петербург (Московский вокзал)",
-        cityCode: "c2", // Санкт-Петербург
-        lat: nil,
-        lng: nil,
+        cityCode: "c2",
+        lat: nil, lng: nil,
         transportType: .train,
         stationType: .station,
         stationTypeName: nil,
@@ -163,8 +145,8 @@ struct ScheduleCardView: View {
         url: URL(string: "http://www.rzd.ru/"),
         phone: "+7 (800) 775-00-00",
         email: "info@rzd.ru",
-        contacts: "Единая телефонная линия: +7 (800) 775-00-00 (звонок бесплатный из всех регионов РФ).",
-        address: "Москва, ул. Новая Басманная , д. 2",
+        contacts: "Единая телефонная линия: +7 (800) 775-00-00",
+        address: "Москва, ул. Новая Басманная, д. 2",
         codes: Carrier.Codes(icao: nil, iata: nil, sirena: nil)
     )
     
@@ -176,7 +158,7 @@ struct ScheduleCardView: View {
         transportType: .train,
         vehicle: nil,
         startTime: nil,
-        days: "13 января, 7, 10, 14, 17, 21, 25, 28 февраля, 3, 7, 11, 14, 17, 21, 24, 28, 31 марта, 4, 7, 11 апреля, …",
+        days: "13 января, 7, 10, 14, 17, 21, 25, 28 февраля",
         interval: nil
     )
     

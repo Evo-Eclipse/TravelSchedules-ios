@@ -8,30 +8,9 @@
 import Foundation
 
 enum DateParsing {
-    static func parseISO8601(_ string: String) -> Date? {
-        if let date = isoWithFractionalSeconds.date(from: string) { return date }
-        if let date = isoBasic.date(from: string) { return date }
-
-        // API actually returns non-ISO values as well
-        let patterns = [
-            // Space-separated datetime with seconds
-            "yyyy-MM-dd HH:mm:ss",
-            // Date-only
-            "yyyy-MM-dd"
-        ]
-        for pattern in patterns {
-            let formatter = DateFormatter()
-            formatter.locale = Locale(identifier: "en_US_POSIX")
-            formatter.timeZone = TimeZone(secondsFromGMT: 0)
-            formatter.calendar = Calendar(identifier: .gregorian)
-            formatter.dateFormat = pattern
-            if let date = formatter.date(from: string) { return date }
-        }
-        // Time-only strings (e.g., "00:10", "00:10:00") are intentionally NOT parsed
-        // here to avoid anchoring to an arbitrary date. Return nil instead.
-        return nil
-    }
-
+    
+    // MARK: - Static Formatters
+    
     private static let isoBasic: ISO8601DateFormatter = {
         let formatter = ISO8601DateFormatter()
         formatter.formatOptions = [.withInternetDateTime]
@@ -44,12 +23,48 @@ enum DateParsing {
         return formatter
     }()
     
-    // Parse date string like "2025-10-13" to Date for formatting
-    static func parseDateString(_ dateString: String) -> Date? {
+    private static let dateTimeFormatter: DateFormatter = {
         let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd"
         formatter.locale = Locale(identifier: "en_US_POSIX")
         formatter.timeZone = TimeZone(secondsFromGMT: 0)
-        return formatter.date(from: dateString)
+        formatter.calendar = Calendar(identifier: .gregorian)
+        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        return formatter
+    }()
+    
+    private static let dateOnlyFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeZone = TimeZone(secondsFromGMT: 0)
+        formatter.calendar = Calendar(identifier: .gregorian)
+        formatter.dateFormat = "yyyy-MM-dd"
+        return formatter
+    }()
+    
+    static let displayDateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "ru_RU")
+        formatter.dateFormat = "d MMMM"
+        return formatter
+    }()
+    
+    static let timeFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm"
+        return formatter
+    }()
+    
+    // MARK: - Parsing Methods
+    
+    static func parseISO8601(_ string: String) -> Date? {
+        if let date = isoWithFractionalSeconds.date(from: string) { return date }
+        if let date = isoBasic.date(from: string) { return date }
+        if let date = dateTimeFormatter.date(from: string) { return date }
+        if let date = dateOnlyFormatter.date(from: string) { return date }
+        return nil
+    }
+    
+    static func parseDateString(_ dateString: String) -> Date? {
+        return dateOnlyFormatter.date(from: dateString)
     }
 }

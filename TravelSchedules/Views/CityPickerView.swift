@@ -22,37 +22,39 @@ struct CityPickerView: View {
             VStack {
                 SearchBarView(searchText: $viewModel.searchQuery)
                 
-                if viewModel.isLoading {
+                switch viewModel.state {
+                case .idle:
+                    EmptyView()
+                    
+                case .loading:
                     Spacer()
                     ProgressView()
                     Spacer()
-                } else {
-                    ScrollView {
-                        LazyVStack {
-                            ForEach(viewModel.filteredCities, id: \.code) { city in
-                                Button {
-                                    selectCity(city)
-                                } label: {
-                                    ListCellView(title: city.title)
+                    
+                case .loaded:
+                    if viewModel.filteredCities.isEmpty && !viewModel.searchQuery.isEmpty {
+                        Spacer()
+                        Text("Город не найден")
+                            .font(.title)
+                            .bold()
+                            .foregroundColor(.yBlack)
+                        Spacer()
+                    } else {
+                        ScrollView {
+                            LazyVStack {
+                                ForEach(viewModel.filteredCities, id: \.code) { city in
+                                    Button {
+                                        selectCity(city)
+                                    } label: {
+                                        ListCellView(title: city.title)
+                                    }
                                 }
                             }
                         }
                     }
-                    .overlay {
-                        if viewModel.filteredCities.isEmpty && !viewModel.searchQuery.isEmpty {
-                            Text("Город не найден")
-                                .font(.title)
-                                .bold()
-                                .foregroundColor(.yBlack)
-
-                            // Would be better to use
-                            // ContentUnavailableView(
-                            //     "Город не найден",
-                            //     systemImage: "magnifyingglass",
-                            //     description: Text("Попробуйте изменить запрос")
-                            // )
-                        }
-                    }
+                    
+                case .error(let errorType):
+                    ErrorView(type: errorType == .network ? .noInternet : .serverError)
                 }
             }
         }
@@ -62,11 +64,6 @@ struct CityPickerView: View {
         .customBackButton(dismiss: dismiss)
         .task {
             await viewModel.loadCities()
-        }
-        .onChange(of: viewModel.searchQuery) {
-            Task {
-                await viewModel.searchCities()
-            }
         }
     }
 

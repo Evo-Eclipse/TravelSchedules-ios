@@ -12,17 +12,17 @@ import Foundation
     private let carrierRepository: CarrierRepository
     let filtersViewModel = FiltersViewModel()
     
-    var segments: [TripSegment] = []
-    var filteredSegments: [TripSegment] = []
-    var isLoading: Bool = false
-    var errorMessage: String?
-    
+    var state: ViewState<[TripSegment]> = .idle
     var fromStation: Station?
     var toStation: Station?
     
-    // Filter state
     var selectedTimeRanges: Set<TimeRange> = []
     var showWithTransfers: Bool? = nil
+    
+    var filteredSegments: [TripSegment] {
+        guard let segments = state.data else { return [] }
+        return applyFilters(to: segments)
+    }
     
     init(scheduleRepository: ScheduleRepository, carrierRepository: CarrierRepository) {
         self.scheduleRepository = scheduleRepository
@@ -30,25 +30,22 @@ import Foundation
     }
     
     func loadSchedules(from originCode: String, to destinationCode: String) async {
-        isLoading = true
-        errorMessage = nil
+        state = .loading
         
         do {
-            segments = try await scheduleRepository.searchSegments(from: originCode, to: destinationCode)
-            applyFilters()
+            let segments = try await scheduleRepository.searchSegments(
+                from: originCode,
+                to: destinationCode
+            )
+            state = .loaded(segments)
         } catch {
-            errorMessage = "Не удалось загрузить расписание"
-            segments = []
-            filteredSegments = []
+            state = .error(.network)
         }
-        
-        isLoading = false
     }
     
-    func applyFilters() {
+    private func applyFilters(to segments: [TripSegment]) -> [TripSegment] {
         var result = segments
         
-        // Filter by time ranges if selected
         if !selectedTimeRanges.isEmpty {
             result = result.filter { segment in
                 guard let departureTime = segment.departureTime,
@@ -59,28 +56,20 @@ import Foundation
             }
         }
         
-        // Filter out transfers if "No" is selected
         if showWithTransfers == false {
             result = result.filter { segment in
                 !(segment.thread?.title?.contains("пересадк") ?? false)
             }
         }
         
-        filteredSegments = result
+        return result
     }
     
     private func parseHourFromTime(_ timeString: String) -> Int? {
-        // Parse "HH:mm:ss" or "HH:mm" to extract hour
         let components = timeString.split(separator: ":")
-        guard let hourString = components.first else {
-            return nil
-        }
+        guard let hourString = components.first else { return nil }
         
         let hourStr = String(hourString).trimmingCharacters(in: .whitespaces)
-        guard let hour = Int(hourStr) else {
-            return nil
-        }
-        
-        return hour
+        return Int(hourStr)
     }
 }
