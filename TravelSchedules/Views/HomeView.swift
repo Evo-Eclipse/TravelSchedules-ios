@@ -24,7 +24,7 @@ struct HomeView: View {
                 Color.yWhite
                     .ignoresSafeArea()
                 
-                VStack {
+                VStack(spacing: 0) {
                     // Stories placeholder
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack {
@@ -37,7 +37,7 @@ struct HomeView: View {
                         .padding()
                     }
                     
-                    HStack(spacing: 16) {
+                    HStack {
                         VStack(alignment: .leading, spacing: 0) {
                             Button {
                                 navigator.push(.cityPicker(.from))

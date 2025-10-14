@@ -16,6 +16,7 @@ struct ListCellView: View {
                 .foregroundColor(.yBlack)
             Spacer()
             Image(systemName: "chevron.right")
+                .fontWeight(.semibold)
                 .foregroundColor(.yBlack)
         }
         .padding()

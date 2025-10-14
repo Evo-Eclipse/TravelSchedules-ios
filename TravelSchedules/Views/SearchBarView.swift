@@ -11,7 +11,7 @@ struct SearchBarView: View {
     @Binding var searchText: String
     
     @State private var isSearching: Bool = false
-    @State private var placeholder = "Поиск..."
+    @State private var placeholder = "Введите запрос"
     
     var body: some View {
         HStack (spacing: 0) {

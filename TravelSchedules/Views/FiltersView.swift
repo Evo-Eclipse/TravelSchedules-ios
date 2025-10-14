@@ -19,7 +19,6 @@ struct FiltersView: View {
                     .ignoresSafeArea()
                 
                 VStack(alignment: .leading, spacing: 24) {
-                    // Time filters section
                     VStack(alignment: .leading, spacing: 16) {
                         Text("Время отправления")
                             .font(.system(size: 24, weight: .bold))
@@ -35,7 +34,6 @@ struct FiltersView: View {
                         }
                     }
                     
-                    // Transfers filter section
                     VStack(alignment: .leading, spacing: 16) {
                         Text("Показывать варианты с пересадками")
                             .font(.system(size: 24, weight: .bold))
@@ -61,7 +59,6 @@ struct FiltersView: View {
                 .padding(.horizontal, 16)
                 .padding(.top, 24)
                 
-                // Apply button at bottom
                 if viewModel.hasActiveFilters {
                     VStack {
                         Spacer()
@@ -84,16 +81,7 @@ struct FiltersView: View {
             .navigationTitle("")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar(.hidden, for: .tabBar)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button {
-                        dismiss()
-                    } label: {
-                        Image(systemName: "chevron.left")
-                            .foregroundColor(.yBlack)
-                    }
-                }
-            }
+            .customBackButton(dismiss: dismiss)
         }
     }
 }

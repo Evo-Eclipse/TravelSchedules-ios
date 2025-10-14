@@ -20,7 +20,7 @@ struct SchedulesView: View {
             Color.yWhite
                 .ignoresSafeArea()
             
-            VStack {
+            VStack(spacing: 0) {
                 if viewModel.isLoading {
                     Spacer()
                     ProgressView()
@@ -30,6 +30,11 @@ struct SchedulesView: View {
                     ErrorView(type: .serverError)
                     Spacer()
                 } else if viewModel.filteredSegments.isEmpty {
+                    Text("\(fromStation.title) → \(toStation.title)")
+                        .font(.title)
+                        .bold()
+                        .foregroundColor(.yBlack)
+                        .padding()
                     Spacer()
                     Text("Вариантов нет")
                         .font(.title)
@@ -65,7 +70,7 @@ struct SchedulesView: View {
         .task {
             await viewModel.loadSchedules(from: fromStation.code, to: toStation.code)
         }
-        .sheet(isPresented: $showFilters) {
+        .fullScreenCover(isPresented: $showFilters) {
             let filtersVM = viewModel.filtersViewModel
             FiltersView(viewModel: filtersVM) {
                 viewModel.selectedTimeRanges = filtersVM.selectedTimeRanges
