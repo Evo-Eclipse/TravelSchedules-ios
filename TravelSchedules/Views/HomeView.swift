@@ -37,7 +37,7 @@ struct HomeView: View {
                         .padding()
                     }
                     
-                    HStack {
+                    HStack(spacing: 16) {
                         VStack(alignment: .leading, spacing: 0) {
                             Button {
                                 navigator.push(.cityPicker(.from))
@@ -66,8 +66,9 @@ struct HomeView: View {
                             tripSelection.swapDirections()
                         } label: {
                             Image(systemName: "arrow.2.squarepath")
+                                .fontWeight(.semibold)
                                 .foregroundColor(.yBlue)
-                                .padding()
+                                .frame(width: 36, height: 36)
                                 .background(Color.yWhiteUniversal)
                                 .clipShape(Circle())
                         }
@@ -88,8 +89,8 @@ struct HomeView: View {
                             Text("Найти")
                                 .bold()
                                 .foregroundColor(.yWhiteUniversal)
-                                .frame(minWidth: 60)
-                                .padding(20)
+                                .padding(.vertical, 20)
+                                .padding(.horizontal, 48)
                                 .background(Color.yBlue)
                                 .cornerRadius(16)
                         }
