@@ -42,6 +42,7 @@ struct CityPickerView: View {
                         if viewModel.filteredCities.isEmpty && !viewModel.searchQuery.isEmpty {
                             Text("Город не найден")
                                 .font(.title)
+                                .bold()
                                 .foregroundColor(.yBlack)
 
                             // Would be better to use

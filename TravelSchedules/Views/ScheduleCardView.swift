@@ -50,10 +50,12 @@ struct ScheduleCardView: View {
                             ProgressView()
                         }
                         .frame(width: 38, height: 38)
+                        .cornerRadius(12)
                     } else {
                         Rectangle()
                             .fill(Color.yGrayLight)
                             .frame(width: 38, height: 38)
+                            .cornerRadius(12)
                     }
                 } else {
                     Rectangle()
@@ -84,7 +86,6 @@ struct ScheduleCardView: View {
             
             HStack(alignment: .center, spacing: 0) {
                 Text(formatTime(segment.departureTime))
-                    .font(.system(size: 24, weight: .regular))
                     .foregroundColor(.yBlackUniversal)
                     .fixedSize()
                 
@@ -97,12 +98,12 @@ struct ScheduleCardView: View {
                 if let durationSec = segment.durationSec {
                     let hours = durationSec / 3600
                     Text("\(hours) часов")
-                        .font(.system(size: 12))
+                        .font(.caption)
                         .foregroundColor(.yBlackUniversal)
                         .fixedSize()
                 } else {
                     Text("--")
-                        .font(.system(size: 12))
+                        .font(.caption)
                         .foregroundColor(.yBlackUniversal)
                         .fixedSize()
                 }
@@ -114,7 +115,6 @@ struct ScheduleCardView: View {
                     .padding(.horizontal, 4)
                 
                 Text(formatTime(segment.arrivalTime))
-                    .font(.system(size: 24, weight: .regular))
                     .foregroundColor(.yBlackUniversal)
                     .fixedSize()
             }

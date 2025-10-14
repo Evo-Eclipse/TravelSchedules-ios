@@ -43,6 +43,7 @@ struct StationPickerView: View {
                         if viewModel.filteredStations.isEmpty && !viewModel.searchQuery.isEmpty {
                             Text("Станция не найдена")
                                 .font(.title)
+                                .bold()
                                 .foregroundColor(.yBlack)
 
                             // Would be better to use

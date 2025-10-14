@@ -18,51 +18,43 @@ struct FiltersView: View {
                 Color.yWhite
                     .ignoresSafeArea()
                 
-                VStack(alignment: .leading, spacing: 24) {
-                    VStack(alignment: .leading, spacing: 16) {
-                        Text("Время отправления")
-                            .font(.system(size: 24, weight: .bold))
-                            .foregroundColor(.yBlack)
-                        
-                        ForEach(TimeRange.allCases, id: \.self) { range in
-                            TimeRangeCheckbox(
-                                title: range.rawValue,
-                                isSelected: viewModel.selectedTimeRanges.contains(range)
-                            ) {
-                                viewModel.toggleTimeRange(range)
-                            }
+                VStack(alignment: .leading, spacing: 16) {
+                    Text("Время отправления")
+                        .font(.title2)
+                        .bold()
+                        .foregroundColor(.yBlack)
+                    
+                    ForEach(TimeRange.allCases, id: \.self) { range in
+                        TimeRangeCheckbox(
+                            title: range.rawValue,
+                            isSelected: viewModel.selectedTimeRanges.contains(range)
+                        ) {
+                            viewModel.toggleTimeRange(range)
                         }
                     }
                     
-                    VStack(alignment: .leading, spacing: 16) {
-                        Text("Показывать варианты с пересадками")
-                            .font(.system(size: 24, weight: .bold))
-                            .foregroundColor(.yBlack)
-                        
-                        TransferOption(
-                            title: "Да",
-                            isSelected: viewModel.showWithTransfers == true
-                        ) {
-                            viewModel.showWithTransfers = viewModel.showWithTransfers == true ? nil : true
-                        }
-                        
-                        TransferOption(
-                            title: "Нет",
-                            isSelected: viewModel.showWithTransfers == false
-                        ) {
-                            viewModel.showWithTransfers = viewModel.showWithTransfers == false ? nil : false
-                        }
+                    Text("Показывать варианты с пересадками")
+                        .font(.title2)
+                        .bold()
+                        .foregroundColor(.yBlack)
+                    
+                    TransferOption(
+                        title: "Да",
+                        isSelected: viewModel.showWithTransfers == true
+                    ) {
+                        viewModel.showWithTransfers = viewModel.showWithTransfers == true ? nil : true
+                    }
+                    
+                    TransferOption(
+                        title: "Нет",
+                        isSelected: viewModel.showWithTransfers == false
+                    ) {
+                        viewModel.showWithTransfers = viewModel.showWithTransfers == false ? nil : false
                     }
                     
                     Spacer()
-                }
-                .padding(.horizontal, 16)
-                .padding(.top, 24)
-                
-                if viewModel.hasActiveFilters {
-                    VStack {
-                        Spacer()
-                        
+                    
+                    if viewModel.hasActiveFilters {
                         Button {
                             onApply()
                         } label: {
@@ -74,9 +66,9 @@ struct FiltersView: View {
                                 .background(Color.yBlue)
                                 .cornerRadius(16)
                         }
-                        .padding()
                     }
                 }
+                .padding()
             }
             .navigationTitle("")
             .navigationBarTitleDisplayMode(.inline)
@@ -97,7 +89,6 @@ struct TimeRangeCheckbox: View {
         } label: {
             HStack {
                 Text(title)
-                    .font(.system(size: 17))
                     .foregroundColor(.yBlack)
                 
                 Spacer()
@@ -109,6 +100,7 @@ struct TimeRangeCheckbox: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
+        .padding(.vertical)
     }
 }
 
@@ -123,7 +115,6 @@ struct TransferOption: View {
         } label: {
             HStack {
                 Text(title)
-                    .font(.system(size: 17))
                     .foregroundColor(.yBlack)
                 
                 Spacer()
@@ -135,6 +126,7 @@ struct TransferOption: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
+        .padding(.vertical)
     }
 }
 
