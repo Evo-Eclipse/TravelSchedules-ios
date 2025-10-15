@@ -8,17 +8,26 @@
 import SwiftUI
 
 struct ContentView: View {
+    @State private var selectedTab = 0
+    @State private var tripSelection = TripSelection()
+    @State private var navigator = AppNavigator()
+    
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        TabView(selection: $selectedTab) {
+            HomeView()
+                .environment(tripSelection)
+                .tabItem {
+                    Image(.iconSchedule)
+                }
+                .tag(0)
+            SettingsView()
+                .tabItem {
+                    Image(.iconSettings)
+                }
+                .tag(1)
         }
-        .padding()
-        .onAppear {
-            testFetchCopyright()
-        }
+        .tint(Color(.yBlack))
+        .environment(navigator)
     }
 }
 

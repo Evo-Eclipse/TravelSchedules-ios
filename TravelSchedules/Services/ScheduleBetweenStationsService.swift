@@ -12,6 +12,7 @@ import OpenAPIURLSession
 typealias ScheduleBetweenStations = Components.Schemas.Segments
 
 protocol ScheduleBetweenStationsServiceProtocol {
+    // swiftlint:disable:next identifier_name
     func fetchScheduleBetweenStations(from: String, to: String) async throws -> ScheduleBetweenStations
 }
 
@@ -22,6 +23,7 @@ final class ScheduleBetweenStationsService: ScheduleBetweenStationsServiceProtoc
         self.client = client
     }
 
+    // swiftlint:disable:next identifier_name
     func fetchScheduleBetweenStations(from: String, to: String) async throws -> ScheduleBetweenStations {
         let response = try await client.getScheduleBetweenStations(query: .init(
             from: from,

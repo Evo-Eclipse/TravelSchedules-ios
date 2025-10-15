@@ -603,6 +603,9 @@ components:
         arrival:
           type: string
           description: Время прибытия
+        start_date:
+          type: string
+          description: Дата начала рейса (yyyy-MM-dd)
         thread:
           $ref: '#/components/schemas/Thread'
         tickets_info:
