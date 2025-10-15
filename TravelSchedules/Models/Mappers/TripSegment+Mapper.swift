@@ -25,6 +25,9 @@ extension TripSegment {
         let threadUID = segment.thread?.uid ?? UUID().uuidString
         let departureKey = segment.departure ?? ""
         let id = threadUID + "_" + departureKey
+        
+        // In standard segments, the field "has_transfers" is absent, always false.
+        let hasTransfers = false
 
         self.init(
             id: id,
@@ -37,7 +40,8 @@ extension TripSegment {
             startDate: segment.start_date,
             durationSec: segment.duration,
             thread: threadSummary,
-            tickets: ticketsInfo
+            tickets: ticketsInfo,
+            hasTransfers: hasTransfers
         )
     }
 }

@@ -58,7 +58,7 @@ import Foundation
         
         if showWithTransfers == false {
             result = result.filter { segment in
-                !(segment.thread?.title?.contains("пересадк") ?? false)
+                !segment.hasTransfers
             }
         }
         

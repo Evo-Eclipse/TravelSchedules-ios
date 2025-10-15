@@ -21,4 +21,5 @@ struct TripSegment: Hashable {
     let durationSec: Int?
     let thread: ThreadSummary?
     let tickets: TicketsInfo?
+    let hasTransfers: Bool
 }

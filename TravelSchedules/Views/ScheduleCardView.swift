@@ -56,7 +56,7 @@ struct ScheduleCardView: View {
                         }
                     }
                     
-                    if let title = segment.thread?.title, title.contains("пересадк") {
+                    if segment.hasTransfers {
                         Text("С пересадкой")
                             .font(.caption)
                             .foregroundColor(.yRed)
@@ -169,7 +169,8 @@ struct ScheduleCardView: View {
         startDate: "2026-01-13",
         durationSec: 30300,
         thread: thread,
-        tickets: nil
+        tickets: nil,
+        hasTransfers: false
     )
     
     ScheduleCardView(segment: segment)
