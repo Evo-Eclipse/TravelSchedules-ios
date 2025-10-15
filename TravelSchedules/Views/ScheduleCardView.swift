@@ -22,53 +22,49 @@ struct ScheduleCardView: View {
     }
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack(alignment: .top) {
-                if let carrier = segment.thread?.carrier {
-                    if let logoURL = carrier.logoURL {
-                        AsyncImage(url: logoURL) { image in
-                            image
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                        } placeholder: {
-                            ProgressView()
-                        }
-                        .frame(width: 38, height: 38)
-                        .cornerRadius(12)
-                    } else {
-                        Rectangle()
-                            .fill(Color.yGrayLight)
-                            .frame(width: 38, height: 38)
-                            .cornerRadius(12)
+        VStack(alignment: .leading, spacing: 18) {
+            HStack {
+                if let logoURL = segment.thread?.carrier?.logoURL {
+                    AsyncImage(url: logoURL) { image in
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                    } placeholder: {
+                        ProgressView()
                     }
+                    .frame(width: 38, height: 38)
+                    .cornerRadius(12)
                 } else {
                     Rectangle()
                         .fill(Color.yGrayLight)
                         .frame(width: 38, height: 38)
+                        .cornerRadius(12)
                 }
                 
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(segment.thread?.carrier?.title ?? "")
-                        .foregroundColor(.yBlackUniversal)
+                VStack(alignment: .leading) {
+                    HStack {
+                        Text(segment.thread?.carrier?.title ?? "")
+                            .foregroundColor(.yBlackUniversal)
+                        
+                        Spacer()
+                        
+                        if let startDate = segment.startDate,
+                           let date = DateParsing.parseDateString(startDate) {
+                            Text(DateParsing.displayDateFormatter.string(from: date))
+                                .font(.caption)
+                                .foregroundColor(.yBlackUniversal)
+                        }
+                    }
                     
                     if let title = segment.thread?.title, title.contains("пересадк") {
-                        Text(title)
+                        Text("С пересадкой")
                             .font(.caption)
                             .foregroundColor(.yRed)
                     }
                 }
-                
-                Spacer()
-                
-                if let startDate = segment.startDate,
-                   let date = DateParsing.parseDateString(startDate) {
-                    Text(DateParsing.displayDateFormatter.string(from: date))
-                        .font(.caption)
-                        .foregroundColor(.yBlackUniversal)
-                }
             }
             
-            HStack(alignment: .center, spacing: 0) {
+            HStack(spacing: 0) {
                 Text(formatTime(segment.departureTime))
                     .foregroundColor(.yBlackUniversal)
                     .fixedSize()
@@ -105,7 +101,7 @@ struct ScheduleCardView: View {
         }
         .padding()
         .background(Color.yGrayLight)
-        .cornerRadius(16)
+        .cornerRadius(24)
     }
 }
 
