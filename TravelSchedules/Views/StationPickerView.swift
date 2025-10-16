@@ -51,6 +51,7 @@ struct StationPickerView: View {
                                     }
                                 }
                             }
+                            .padding()
                         }
                     }
                     

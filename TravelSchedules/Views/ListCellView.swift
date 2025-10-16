@@ -19,10 +19,11 @@ struct ListCellView: View {
                 .fontWeight(.semibold)
                 .foregroundColor(.yBlack)
         }
-        .padding()
+        .padding(.vertical)
     }
 }
 
 #Preview {
     ListCellView(title: "Москва")
+        .padding()
 }

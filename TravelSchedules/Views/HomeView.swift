@@ -118,6 +118,8 @@ struct HomeView: View {
                         fromStation: from,
                         toStation: to
                     )
+                case .carrierInfo(let carrier):
+                    CarrierInfoView(carrier: carrier)
                 }
             }
         }
