@@ -9,9 +9,13 @@ import SwiftUI
 
 @main
 struct TravelSchedulesApp: App {
+    @State private var themeManager = ThemeManager.shared
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            SplashView()
+                .environment(themeManager)
+                .preferredColorScheme(themeManager.colorScheme)
         }
     }
 }

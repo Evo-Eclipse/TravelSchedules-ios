@@ -9,6 +9,7 @@ import SwiftUI
 
 struct SplashView: View {
     @State private var isActive = false
+    @State private var themeManager = ThemeManager.shared
     
     var body: some View {
         if isActive {
@@ -19,6 +20,7 @@ struct SplashView: View {
                     .resizable()
                     .ignoresSafeArea()
             }
+            .preferredColorScheme(themeManager.colorScheme)
             .onAppear {
                 withAnimation {
                     isActive = true
