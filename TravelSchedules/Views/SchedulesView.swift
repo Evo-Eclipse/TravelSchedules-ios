@@ -50,12 +50,16 @@ struct SchedulesView: View {
                         ScrollView {
                             LazyVStack(spacing: 8) {
                                 ForEach(viewModel.filteredSegments, id: \.id) { segment in
-                                    NavigationLink {
-                                        CarrierView()
-                                    } label: {
+                                    if let carrier = segment.thread?.carrier {
+                                        NavigationLink {
+                                            CarrierInfoView(carrier: carrier)
+                                        } label: {
+                                            ScheduleCardView(segment: segment)
+                                        }
+                                        .buttonStyle(.plain)
+                                    } else {
                                         ScheduleCardView(segment: segment)
                                     }
-                                    .buttonStyle(.plain)
                                 }
                             }
                             .padding(.horizontal)
