@@ -11,6 +11,7 @@ enum AppRoute: Hashable {
     case cityPicker(Direction)
     case stationPicker(city: City, direction: Direction)
     case schedules(from: Station, to: Station)
+    case carrierInfo(Carrier)
 }
 
 enum Direction: Hashable {
