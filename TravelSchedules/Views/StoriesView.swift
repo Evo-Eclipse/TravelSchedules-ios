@@ -61,6 +61,8 @@ struct StoriesView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 40))
                     .transition(.opacity)
                     .id(currentStoryIndex)
+
+                tapAreas
                 
                 VStack(spacing: 0) {
                     statusBar
@@ -71,8 +73,6 @@ struct StoriesView: View {
             }
             .padding(.top, 8)
             .padding(.bottom)
-            
-            tapAreas
         }
         .onAppear(perform: startTimer)
         .onDisappear(perform: stopTimer)
@@ -163,7 +163,6 @@ struct StoriesView: View {
                     }
                 }, perform: {})
         }
-        .padding(.top, 88)
         .gesture(
             DragGesture()
                 .onEnded { value in
