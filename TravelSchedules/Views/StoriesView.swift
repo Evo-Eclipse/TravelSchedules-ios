@@ -20,7 +20,6 @@ struct StoriesView: View {
     
     @State private var progress: CGFloat
     @State private var timer: Timer?
-    @GestureState private var dragOffset: CGFloat = 0
     
     // MARK: - Computed Properties
     
@@ -52,7 +51,7 @@ struct StoriesView: View {
     
     var body: some View {
         ZStack {
-            Color.yWhite.ignoresSafeArea()
+            Color.yBlackUniversal.ignoresSafeArea()
             
             ZStack {
                 currentStory.image
@@ -60,12 +59,12 @@ struct StoriesView: View {
                     .aspectRatio(contentMode: .fill)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .clipShape(RoundedRectangle(cornerRadius: 40))
-                    .offset(x: dragOffset)
                     .transition(.opacity)
                     .id(currentStoryIndex)
                 
                 VStack(spacing: 0) {
                     statusBar
+                    closeButton
                     Spacer()
                     storyContent
                 }
@@ -90,31 +89,32 @@ struct StoriesView: View {
             )
             .frame(height: 6)
             .padding(.horizontal, 12)
-            
-            closeButton
         }
         .padding(.top, 28)
-        .padding(.bottom, 18)
+        .padding(.bottom)
     }
     
     private var closeButton: some View {
-        Button {
-            markCurrentAsViewed()
-            dismiss()
-            print("StoriesView: Close button tapped")
-        } label: {
-            ZStack {
-                Circle()
-                    .fill(Color.yBlackUniversal)
-                    .frame(width: 30, height: 30)
-                
-                Image(systemName: "xmark")
-                    .font(.system(size: 14, weight: .semibold))
-                    .foregroundColor(.yWhiteUniversal)
+        HStack {
+            Spacer()
+            Button {
+                markCurrentAsViewed()
+                dismiss()
+            } label: {
+                ZStack {
+                    Circle()
+                        .fill(Color.yBlackUniversal)
+                        .frame(width: 30, height: 30)
+                    
+                    Image(systemName: "xmark")
+                        .font(.system(size: 12, weight: .bold))
+                        .foregroundColor(.yWhiteUniversal)
+                }
             }
         }
-        .padding(.trailing, 12)
+        .padding(.horizontal, 12)
     }
+
     
     private var storyContent: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -163,14 +163,9 @@ struct StoriesView: View {
                     }
                 }, perform: {})
         }
-        .border(.green)
-        .padding(.top, 80)
-        .border(.red)
+        .padding(.top, 88)
         .gesture(
             DragGesture()
-                .updating($dragOffset) { value, state, _ in
-                    state = value.translation.width
-                }
                 .onEnded { value in
                     if value.translation.width < -50 {
                         goToNextStory()
@@ -216,8 +211,8 @@ struct StoriesView: View {
         let nextProgress = CGFloat(currentStoryIndex + 1) * progressPerStory
         withAnimation(.easeInOut(duration: 0.3)) {
             progress = nextProgress
-            startTimer()
         }
+        startTimer()
     }
     
     private func goToPreviousStory() {
