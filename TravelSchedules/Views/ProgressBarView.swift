@@ -17,66 +17,60 @@ struct ProgressBarView: View {
     
     var body: some View {
         GeometryReader { geometry in
-            ZStack(alignment: .leading) {
-                backgroundBar(width: geometry.size.width)
-                progressBar(width: geometry.size.width)
-            }
-            .mask {
-                ProgressMaskView(
+            ProgressShape(
+                numberOfSections: numberOfSections,
+                progress: progress,
+                spacing: sectionSpacing,
+                cornerRadius: cornerRadius
+            )
+            .fill(.yBlue)
+            .background {
+                ProgressShape(
                     numberOfSections: numberOfSections,
-                    cornerRadius: cornerRadius,
-                    height: height,
-                    spacing: sectionSpacing
+                    progress: 1.0,
+                    spacing: sectionSpacing,
+                    cornerRadius: cornerRadius
                 )
+                .fill(.yWhiteUniversal)
             }
+            .frame(height: height)
             .accessibilityElement(children: .ignore)
             .accessibilityLabel("Story progress")
             .accessibilityValue("\(Int(progress * 100))%")
         }
     }
-        
-    private func backgroundBar(width: CGFloat) -> some View {
-        RoundedRectangle(cornerRadius: cornerRadius)
-            .frame(width: width, height: height)
-            .foregroundStyle(.yWhiteUniversal)
-    }
-    
-    private func progressBar(width: CGFloat) -> some View {
-        RoundedRectangle(cornerRadius: cornerRadius)
-            .frame(
-                width: min(progress * width, width),
-                height: height
-            )
-            .foregroundStyle(.yBlue)
-    }
 }
 
-private struct ProgressMaskView: View {
+private struct ProgressShape: Shape {
     let numberOfSections: Int
-    let cornerRadius: CGFloat
-    let height: CGFloat
+    let progress: CGFloat
     let spacing: CGFloat
+    let cornerRadius: CGFloat
     
-    var body: some View {
-        HStack(spacing: spacing) {
-            ForEach(0..<numberOfSections, id: \.self) { _ in
-                MaskSectionView(
-                    cornerRadius: cornerRadius,
-                    height: height
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+        
+        let sectionWidth = (rect.width - spacing * CGFloat(numberOfSections - 1)) / CGFloat(numberOfSections)
+        let progressWidth = rect.width * progress
+        
+        for index in 0..<numberOfSections {
+            let xPosition = CGFloat(index) * (sectionWidth + spacing)
+            let sectionRect = CGRect(
+                x: xPosition,
+                y: 0,
+                width: min(sectionWidth, max(0, progressWidth - xPosition)),
+                height: rect.height
+            )
+            
+            if sectionRect.width > 0 {
+                path.addRoundedRect(
+                    in: sectionRect,
+                    cornerSize: CGSize(width: cornerRadius, height: cornerRadius)
                 )
             }
         }
-    }
-}
-
-private struct MaskSectionView: View {
-    let cornerRadius: CGFloat
-    let height: CGFloat
-    
-    var body: some View {
-        RoundedRectangle(cornerRadius: cornerRadius)
-            .frame(height: height)
-            .foregroundStyle(.white)
+        
+        return path
     }
 }
 
