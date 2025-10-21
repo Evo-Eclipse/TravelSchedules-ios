@@ -63,7 +63,7 @@ struct CarrierInfoView: View {
     private var contactInfo: some View {
         VStack(alignment: .leading, spacing: 0) {
             ForEach(infoFields, id: \.label) { field in
-                InfoRow(label: field.label, value: field.value)
+                InfoRowView(label: field.label, value: field.value)
             }
         }
         .padding()
@@ -77,23 +77,6 @@ struct CarrierInfoView: View {
             // carrier.address.map { ("Адрес", $0) },
             // carrier.contacts.map { ("Контакты", $0) }
         ].compactMap { $0 }
-    }
-}
-
-struct InfoRow: View {
-    let label: String
-    let value: String
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            Text(label)
-                .foregroundColor(.yBlack)
-            
-            Text(value)
-                .font(.caption)
-                .foregroundColor(.yBlue)
-        }
-        .padding(.vertical, 12)
     }
 }
 
