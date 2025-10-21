@@ -9,6 +9,7 @@ import SwiftUI
 
 struct SchedulesView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(AppNavigator.self) private var navigator
     @State var viewModel: SchedulesViewModel
     @State private var showFilters = false
     
@@ -50,12 +51,16 @@ struct SchedulesView: View {
                         ScrollView {
                             LazyVStack(spacing: 8) {
                                 ForEach(viewModel.filteredSegments, id: \.id) { segment in
-                                    NavigationLink {
-                                        CarrierView()
-                                    } label: {
+                                    if let carrier = segment.thread?.carrier {
+                                        Button {
+                                            navigator.push(.carrierInfo(carrier))
+                                        } label: {
+                                            ScheduleCardView(segment: segment)
+                                        }
+                                        .buttonStyle(.plain)
+                                    } else {
                                         ScheduleCardView(segment: segment)
                                     }
-                                    .buttonStyle(.plain)
                                 }
                             }
                             .padding(.horizontal)

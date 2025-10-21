@@ -11,6 +11,7 @@ struct ContentView: View {
     @State private var selectedTab = 0
     @State private var tripSelection = TripSelection()
     @State private var navigator = AppNavigator()
+    @State private var themeManager = ThemeManager.shared
     
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -28,6 +29,8 @@ struct ContentView: View {
         }
         .tint(Color(.yBlack))
         .environment(navigator)
+        .environment(themeManager)
+        .preferredColorScheme(themeManager.colorScheme)
     }
 }
 

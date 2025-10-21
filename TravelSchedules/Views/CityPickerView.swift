@@ -51,6 +51,7 @@ struct CityPickerView: View {
                                 }
                             }
                         }
+                        .padding()
                     }
                     
                 case .error(let errorType):

@@ -10,6 +10,9 @@ import SwiftUI
 struct HomeView: View {
     @Environment(TripSelection.self) private var tripSelection
     @Environment(AppNavigator.self) private var appNavigator
+    @State private var selectedStoryIndex: Int?
+    @State private var showStories = false
+    @State private var storiesRefreshTrigger = UUID()
     
     private let dependencies = DIContainer.shared
     
@@ -25,78 +28,10 @@ struct HomeView: View {
                     .ignoresSafeArea()
                 
                 VStack(spacing: 0) {
-                    // Stories placeholder
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack {
-                            ForEach(0..<5) { index in
-                                RoundedRectangle(cornerRadius: 16)
-                                    .fill(Color.yGrayLight)
-                                    .frame(width: 92, height: 140)
-                            }
-                        }
-                        .padding()
-                    }
-                    
-                    HStack(spacing: 16) {
-                        VStack(alignment: .leading, spacing: 0) {
-                            Button {
-                                navigator.push(.cityPicker(.from))
-                            } label: {
-                                Text(tripSelection.fromStation?.title ?? "Откуда")
-                                    .lineLimit(1)
-                                    .foregroundColor(tripSelection.fromStation == nil ? .yGrayUniversal : .yBlackUniversal)
-                                    .padding()
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                            }
-                            
-                            Button {
-                                navigator.push(.cityPicker(.to))
-                            } label: {
-                                Text(tripSelection.toStation?.title ?? "Куда")
-                                    .lineLimit(1)
-                                    .foregroundColor(tripSelection.toStation == nil ? .yGrayUniversal : .yBlackUniversal)
-                                    .padding()
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                            }
-                        }
-                        .background(Color.yWhiteUniversal)
-                        .clipShape(RoundedRectangle(cornerRadius: 20))
-                        
-                        Button {
-                            tripSelection.swapDirections()
-                        } label: {
-                            Image(systemName: "arrow.2.squarepath")
-                                .fontWeight(.semibold)
-                                .foregroundColor(.yBlue)
-                                .frame(width: 36, height: 36)
-                                .background(Color.yWhiteUniversal)
-                                .clipShape(Circle())
-                        }
-                    }
-                    .padding()
-                    .background(
-                        RoundedRectangle(cornerRadius: 20)
-                            .fill(Color.yBlue)
-                    )
-                    .padding()
-                    
-                    if isFormComplete {
-                        Button {
-                            if let from = tripSelection.fromStation, let to = tripSelection.toStation {
-                                navigator.push(.schedules(from: from, to: to))
-                            }
-                        } label: {
-                            Text("Найти")
-                                .bold()
-                                .foregroundColor(.yWhiteUniversal)
-                                .padding(.vertical, 20)
-                                .padding(.horizontal, 48)
-                                .background(Color.yBlue)
-                                .cornerRadius(16)
-                        }
-                    }
-                    
+                    storiesCollection
+                    directionPanel
                     Spacer()
+                    searchButton
                 }
             }
             .navigationDestination(for: AppRoute.self) { destination in
@@ -118,7 +53,103 @@ struct HomeView: View {
                         fromStation: from,
                         toStation: to
                     )
+                case .carrierInfo(let carrier):
+                    CarrierInfoView(carrier: carrier)
                 }
+            }
+        }
+        .fullScreenCover(isPresented: $showStories, onDismiss: {
+            // FIX: Обновляем сторис при закрытии
+            storiesRefreshTrigger = UUID()
+        }) {
+            StoriesView(stories: Story.samples, startIndex: selectedStoryIndex ?? 0)
+        }
+    }
+    
+    // MARK: - Components
+    
+    // MARK: Stories Collection
+    
+    private var storiesCollection: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 12) {
+                ForEach(Array(Story.samples.enumerated()), id: \.element.id) { index, story in
+                    StoryCellView(story: story, refreshTrigger: storiesRefreshTrigger) {
+                        selectedStoryIndex = index
+                        showStories = true
+                    }
+                }
+            }
+            .padding(.horizontal, 16)
+        }
+        .frame(height: 140)
+        .padding(.vertical, 24)
+    }
+    
+    // MARK: Direction Panel
+    
+    private var directionPanel: some View {
+        HStack(spacing: 16) {
+            VStack(alignment: .leading, spacing: 0) {
+                Button {
+                    appNavigator.push(.cityPicker(.from))
+                } label: {
+                    Text(tripSelection.fromStation?.title ?? "Откуда")
+                        .lineLimit(1)
+                        .foregroundColor(tripSelection.fromStation == nil ? .yGrayUniversal : .yBlackUniversal)
+                        .padding()
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+                
+                Button {
+                    appNavigator.push(.cityPicker(.to))
+                } label: {
+                    Text(tripSelection.toStation?.title ?? "Куда")
+                        .lineLimit(1)
+                        .foregroundColor(tripSelection.toStation == nil ? .yGrayUniversal : .yBlackUniversal)
+                        .padding()
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+            }
+            .background(Color.yWhiteUniversal)
+            .clipShape(RoundedRectangle(cornerRadius: 20))
+            
+            Button {
+                tripSelection.swapDirections()
+            } label: {
+                Image(systemName: "arrow.2.squarepath")
+                    .fontWeight(.semibold)
+                    .foregroundColor(.yBlue)
+                    .frame(width: 36, height: 36)
+                    .background(Color.yWhiteUniversal)
+                    .clipShape(Circle())
+            }
+        }
+        .padding()
+        .background(
+            RoundedRectangle(cornerRadius: 20)
+                .fill(Color.yBlue)
+        )
+        .padding()
+    }
+    
+    // MARK: Search Button
+    
+    @ViewBuilder
+    private var searchButton: some View {
+        if isFormComplete {
+            Button {
+                if let from = tripSelection.fromStation, let to = tripSelection.toStation {
+                    appNavigator.push(.schedules(from: from, to: to))
+                }
+            } label: {
+                Text("Найти")
+                    .bold()
+                    .foregroundColor(.yWhiteUniversal)
+                    .padding(.vertical, 20)
+                    .padding(.horizontal, 48)
+                    .background(Color.yBlue)
+                    .cornerRadius(16)
             }
         }
     }
@@ -126,4 +157,6 @@ struct HomeView: View {
 
 #Preview {
     HomeView()
+        .environment(TripSelection())
+        .environment(AppNavigator())
 }
