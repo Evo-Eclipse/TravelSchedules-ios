@@ -9,7 +9,7 @@
 
 import Foundation
 
-struct CopyrightInfo: Equatable, Hashable {
+struct CopyrightInfo: Equatable, Hashable, Sendable {
     let url: URL
     let text: String
     let logos: [URL]

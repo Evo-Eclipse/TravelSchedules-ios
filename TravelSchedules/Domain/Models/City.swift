@@ -10,7 +10,7 @@
 
 import Foundation
 
-struct City: Hashable {
+struct City: Hashable, Sendable {
     let code: String
     let title: String
     let lat: Double?

@@ -9,7 +9,7 @@
 
 import Foundation
 
-struct Price: Hashable {
+struct Price: Hashable, Sendable {
     let currency: String?
     let amountMinor: Int?
 }

@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class CityRepository {
+final class CityRepository: @unchecked Sendable {
     private let allStationsService: AllStationsServiceProtocol
     private let nearestCityService: NearestCityServiceProtocol
 

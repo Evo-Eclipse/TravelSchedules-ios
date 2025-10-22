@@ -9,7 +9,7 @@
 
 import Foundation
 
-struct ThreadSummary: Hashable {
+struct ThreadSummary: Hashable, Sendable {
     let uid: String?
     let number: String?
     let title: String?
@@ -20,7 +20,7 @@ struct ThreadSummary: Hashable {
     let days: String?
     let interval: IntervalInfo?
 
-    struct IntervalInfo: Hashable {
+    struct IntervalInfo: Hashable, Sendable {
         let density: String?
         let beginTime: String?
         let endTime: String?

@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum ViewState<T> {
+enum ViewState<T: Sendable>: Sendable {
     case idle
     case loading
     case loaded(T)

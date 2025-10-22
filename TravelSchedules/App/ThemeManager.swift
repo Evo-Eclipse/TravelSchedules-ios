@@ -7,7 +7,8 @@
 
 import SwiftUI
 
-@Observable final class ThemeManager {
+@MainActor
+@Observable final class ThemeManager: @unchecked Sendable {
     static let shared = ThemeManager()
     
     private init() {

@@ -9,7 +9,7 @@
 
 import Foundation
 
-struct Station: Hashable {
+struct Station: Hashable, Sendable {
     let code: String
     let title: String
     let cityCode: String?

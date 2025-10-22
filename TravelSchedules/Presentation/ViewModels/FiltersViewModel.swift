@@ -7,6 +7,7 @@
 
 import Foundation
 
+@MainActor
 @Observable final class FiltersViewModel {
     var selectedTimeRanges: Set<TimeRange> = []
     var showWithTransfers: Bool? = nil

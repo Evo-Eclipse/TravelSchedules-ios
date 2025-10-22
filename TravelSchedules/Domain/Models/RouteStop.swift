@@ -9,7 +9,7 @@
 
 import Foundation
 
-struct RouteStop: Hashable {
+struct RouteStop: Hashable, Sendable {
     let arrival: Date?
     let departure: Date?
     let stopTimeSec: Int?

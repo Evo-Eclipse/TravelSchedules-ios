@@ -7,7 +7,8 @@
 
 import Foundation
 
-final class StoriesStorage {
+@MainActor
+final class StoriesStorage: @unchecked Sendable {
     static let shared = StoriesStorage()
     private let key = "viewedStories"
     

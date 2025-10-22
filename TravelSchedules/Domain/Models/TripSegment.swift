@@ -9,7 +9,7 @@
 
 import Foundation
 
-struct TripSegment: Hashable {
+struct TripSegment: Hashable, Sendable {
     let id: String
     let from: Station
     let to: Station // swiftlint:disable:this identifier_name

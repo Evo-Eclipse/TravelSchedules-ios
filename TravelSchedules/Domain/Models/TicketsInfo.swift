@@ -9,11 +9,11 @@
 
 import Foundation
 
-struct TicketsInfo: Hashable {
+struct TicketsInfo: Hashable, Sendable {
     let eticket: Bool?
     let places: [Place]
 
-    struct Place: Hashable {
+    struct Place: Hashable, Sendable {
         let name: String?
         let price: Price?
     }

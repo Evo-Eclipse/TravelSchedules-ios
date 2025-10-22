@@ -176,11 +176,13 @@ struct StoriesView: View {
     }
     
     // MARK: - Timer Management
-    
+
     private func startTimer() {
         timer?.invalidate()
         timer = Timer.scheduledTimer(withTimeInterval: timerInterval, repeats: true) { _ in
-            advanceProgress()
+            Task { @MainActor in
+                self.advanceProgress()
+            }
         }
     }
     
@@ -190,7 +192,8 @@ struct StoriesView: View {
     }
     
     // MARK: - Progress Management
-    
+
+    @MainActor
     private func advanceProgress() {
         let newProgress = progress + progressPerTick
         

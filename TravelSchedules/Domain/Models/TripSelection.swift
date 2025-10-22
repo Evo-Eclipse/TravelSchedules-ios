@@ -7,6 +7,7 @@
 
 import Foundation
 
+@MainActor
 @Observable final class TripSelection {
     var fromCity: City?
     var fromStation: Station?

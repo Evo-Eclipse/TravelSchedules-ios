@@ -9,7 +9,7 @@
 
 import Foundation
 
-struct Carrier: Hashable {
+struct Carrier: Hashable, Sendable {
     let code: String?
     let title: String?
     let logoURL: URL?
@@ -20,7 +20,7 @@ struct Carrier: Hashable {
     let address: String?
     let codes: Codes?
 
-    struct Codes: Hashable {
+    struct Codes: Hashable, Sendable {
         let icao: String?
         let iata: String?
         let sirena: String?

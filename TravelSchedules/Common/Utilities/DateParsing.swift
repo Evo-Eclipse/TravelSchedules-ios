@@ -8,16 +8,16 @@
 import Foundation
 
 enum DateParsing {
-    
+
     // MARK: - Static Formatters
-    
-    private static let isoBasic: ISO8601DateFormatter = {
+
+    private nonisolated(unsafe) static let isoBasic: ISO8601DateFormatter = {
         let formatter = ISO8601DateFormatter()
         formatter.formatOptions = [.withInternetDateTime]
         return formatter
     }()
 
-    private static let isoWithFractionalSeconds: ISO8601DateFormatter = {
+    private nonisolated(unsafe) static let isoWithFractionalSeconds: ISO8601DateFormatter = {
         let formatter = ISO8601DateFormatter()
         formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
         return formatter
