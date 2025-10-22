@@ -11,7 +11,7 @@ import OpenAPIURLSession
 
 typealias NearestStations = Components.Schemas.Stations
 
-protocol NearestStationsServiceProtocol {
+protocol NearestStationsServiceProtocol: Sendable {
     func fetchNearestStations(lat: Double, lng: Double, distance: Int) async throws -> NearestStations
 }
 

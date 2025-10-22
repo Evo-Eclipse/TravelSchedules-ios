@@ -11,7 +11,7 @@ import OpenAPIURLSession
 
 typealias ScheduleBetweenStations = Components.Schemas.Segments
 
-protocol ScheduleBetweenStationsServiceProtocol {
+protocol ScheduleBetweenStationsServiceProtocol: Sendable {
     // swiftlint:disable:next identifier_name
     func fetchScheduleBetweenStations(from: String, to: String) async throws -> ScheduleBetweenStations
 }

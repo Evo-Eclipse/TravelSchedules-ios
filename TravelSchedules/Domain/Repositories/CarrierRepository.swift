@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class CarrierRepository: @unchecked Sendable {
+actor CarrierRepository {
     private let carrierService: CarrierInfoServiceProtocol
     private let cacheTTL: TimeInterval = 24 * 60 * 60 // 1d
 

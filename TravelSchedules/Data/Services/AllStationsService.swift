@@ -11,7 +11,7 @@ import OpenAPIURLSession
 
 typealias AllStations = Components.Schemas.ResponseAllStations
 
-protocol AllStationsServiceProtocol {
+protocol AllStationsServiceProtocol: Sendable {
     func fetchAllStations() async throws -> AllStations
 }
 

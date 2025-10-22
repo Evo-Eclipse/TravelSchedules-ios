@@ -8,35 +8,34 @@
 import Foundation
 import SwiftUI
 
-// MARK: - Protocol for Testability
+// MARK: - Dependency Container Protocol
 
-@MainActor
-protocol DIContainerProtocol {
+protocol DIContainerProtocol: Sendable {
     var client: Client { get }
     var allStationsService: AllStationsServiceProtocol { get }
     var nearestCityService: NearestCityServiceProtocol { get }
     var nearestStationsService: NearestStationsServiceProtocol { get }
     var scheduleService: ScheduleBetweenStationsServiceProtocol { get }
     var carrierInfoService: CarrierInfoServiceProtocol { get }
+    
+    // Repositories (кэшируемые)
     var cityRepository: CityRepository { get }
     var stationRepository: StationRepository { get }
     var scheduleRepository: ScheduleRepository { get }
     var carrierRepository: CarrierRepository { get }
-    
-    func makeCityPickerViewModel() -> CityPickerViewModel
-    func makeStationPickerViewModel() -> StationPickerViewModel
-    func makeSchedulesViewModel() -> SchedulesViewModel
+
+    @MainActor func makeCityPickerViewModel() -> CityPickerViewModel
+    @MainActor func makeStationPickerViewModel() -> StationPickerViewModel
+    @MainActor func makeSchedulesViewModel() -> SchedulesViewModel
 }
 
-// MARK: - Dependency Container
+// MARK: - Dependency Container Implementation
 
 final class DIContainer: DIContainerProtocol, @unchecked Sendable {
-    @MainActor
     static let shared = DIContainer()
 
     // MARK: - Services
 
-    @MainActor
     private(set) lazy var client: Client = {
         do {
             return try APIClientProvider.make(apiKey: Constants.apiKey)
@@ -45,60 +44,42 @@ final class DIContainer: DIContainerProtocol, @unchecked Sendable {
         }
     }()
 
-    @MainActor
-    private(set) lazy var allStationsService: AllStationsServiceProtocol = {
+    private(set) lazy var allStationsService: AllStationsServiceProtocol =
         AllStationsService(client: client)
-    }()
 
-    @MainActor
-    private(set) lazy var nearestCityService: NearestCityServiceProtocol = {
+    private(set) lazy var nearestCityService: NearestCityServiceProtocol =
         NearestCityService(client: client)
-    }()
 
-    @MainActor
-    private(set) lazy var nearestStationsService: NearestStationsServiceProtocol = {
+    private(set) lazy var nearestStationsService: NearestStationsServiceProtocol =
         NearestStationsService(client: client)
-    }()
 
-    @MainActor
-    private(set) lazy var scheduleService: ScheduleBetweenStationsServiceProtocol = {
+    private(set) lazy var scheduleService: ScheduleBetweenStationsServiceProtocol =
         ScheduleBetweenStationsService(client: client)
-    }()
 
-    @MainActor
-    private(set) lazy var carrierInfoService: CarrierInfoServiceProtocol = {
+    private(set) lazy var carrierInfoService: CarrierInfoServiceProtocol =
         CarrierInfoService(client: client)
-    }()
+    
+    // MARK: - Repositories (Singleton)
 
-    // MARK: - Repositories
-
-    @MainActor
-    private(set) lazy var cityRepository: CityRepository = {
+    private(set) lazy var cityRepository: CityRepository =
         CityRepository(
             allStationsService: allStationsService,
             nearestCityService: nearestCityService
         )
-    }()
-
-    @MainActor
-    private(set) lazy var stationRepository: StationRepository = {
+    
+    private(set) lazy var stationRepository: StationRepository =
         StationRepository(
             allStationsService: allStationsService,
             nearestStationsService: nearestStationsService
         )
-    }()
-
-    @MainActor
-    private(set) lazy var scheduleRepository: ScheduleRepository = {
+    
+    private(set) lazy var scheduleRepository: ScheduleRepository =
         ScheduleRepository(scheduleService: scheduleService)
-    }()
-
-    @MainActor
-    private(set) lazy var carrierRepository: CarrierRepository = {
+    
+    private(set) lazy var carrierRepository: CarrierRepository =
         CarrierRepository(service: carrierInfoService)
-    }()
 
-    // MARK: - ViewModels
+    // MARK: - Factories
 
     @MainActor
     func makeCityPickerViewModel() -> CityPickerViewModel {
@@ -121,26 +102,16 @@ final class DIContainer: DIContainerProtocol, @unchecked Sendable {
     private init() {}
 }
 
-// MARK: - SwiftUI Environment Integration
-
-private struct DIContainerKey: EnvironmentKey {
-    nonisolated(unsafe) static let defaultValue: any DIContainerProtocol = MainActor.assumeIsolated {
-        DIContainer.shared
-    }
-}
+// MARK: - Environment Integration
 
 extension EnvironmentValues {
-    var dependencies: DIContainerProtocol {
-        get { self[DIContainerKey.self] }
-        set { self[DIContainerKey.self] = newValue }
-    }
+    @Entry var dependencies: any DIContainerProtocol = DIContainer.shared
 }
 
-// MARK: - View Extension for Convenience
+// MARK: - View Extension
 
 extension View {
-    @MainActor
-    func withDependencies(_ container: DIContainerProtocol? = nil) -> some View {
-        self.environment(\.dependencies, container ?? DIContainer.shared)
+    func withDependencies(_ container: (any DIContainerProtocol)? = nil) -> some View {
+        environment(\.dependencies, container ?? DIContainer.shared)
     }
 }

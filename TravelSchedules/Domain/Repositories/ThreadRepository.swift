@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class ThreadRepository: @unchecked Sendable {
+actor ThreadRepository {
     private let routeStationsService: RouteStationsServiceProtocol
     private let cacheTTL: TimeInterval = 30 * 60 // 30m
 

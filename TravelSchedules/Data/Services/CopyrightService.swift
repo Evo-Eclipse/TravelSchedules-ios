@@ -11,7 +11,7 @@ import OpenAPIURLSession
 
 typealias Copyright = Components.Schemas.ResponseCopyright
 
-protocol CopyrightServiceProtocol {
+protocol CopyrightServiceProtocol: Sendable {
     func fetchCopyright() async throws -> Copyright
 }
 

@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class CopyrightRepository: @unchecked Sendable {
+actor CopyrightRepository {
     private enum ErrorType: Error {
         case missingPayload, invalidURL
     }

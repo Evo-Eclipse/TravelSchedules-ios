@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class ScheduleRepository: @unchecked Sendable {
+actor ScheduleRepository {
     private let scheduleService: ScheduleBetweenStationsServiceProtocol
     private let cacheTTL: TimeInterval = 10 * 60 // 10m
 

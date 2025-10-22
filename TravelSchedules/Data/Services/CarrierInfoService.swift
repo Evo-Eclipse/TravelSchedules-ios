@@ -11,7 +11,7 @@ import OpenAPIURLSession
 
 typealias CarrierInfo = Components.Schemas.ResponseCarrier
 
-protocol CarrierInfoServiceProtocol {
+protocol CarrierInfoServiceProtocol: Sendable {
     func fetchCarrierInfo(code: String) async throws -> CarrierInfo
 }
 

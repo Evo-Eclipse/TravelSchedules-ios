@@ -11,7 +11,7 @@ import OpenAPIURLSession
 
 typealias StationSchedule = Components.Schemas.ResponseSchedule
 
-protocol StationScheduleServiceProtocol {
+protocol StationScheduleServiceProtocol: Sendable {
     func fetchStationSchedule(station: String) async throws -> StationSchedule
 }
 

@@ -11,7 +11,7 @@ import OpenAPIURLSession
 
 typealias RouteStations = Components.Schemas.ResponseThreadStations
 
-protocol RouteStationsServiceProtocol {
+protocol RouteStationsServiceProtocol: Sendable {
     func fetchRouteStations(uid: String) async throws -> RouteStations
 }
 
