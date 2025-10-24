@@ -7,6 +7,7 @@
 
 import Foundation
 
+@MainActor
 final class StoriesStorage {
     static let shared = StoriesStorage()
     private let key = "viewedStories"
@@ -19,7 +20,7 @@ final class StoriesStorage {
                   let strings = try? JSONDecoder().decode([String].self, from: data) else {
                 return []
             }
-            return Set(strings.compactMap { UUID(uuidString: $0) }) // QUESTION: Почему compactMap, а не map?
+            return Set(strings.compactMap { UUID(uuidString: $0) })
         }
         set {
             let strings = newValue.map { $0.uuidString }

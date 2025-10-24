@@ -7,6 +7,7 @@
 
 import Foundation
 
+@MainActor
 final class ThemeStorage {
     static let shared = ThemeStorage()
     private let key = "selectedTheme"
