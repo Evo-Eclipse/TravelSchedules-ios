@@ -8,7 +8,7 @@
 import Foundation
 
 @MainActor
-final class ThemeStorage: @unchecked Sendable {
+final class ThemeStorage {
     static let shared = ThemeStorage()
     private let key = "selectedTheme"
     
